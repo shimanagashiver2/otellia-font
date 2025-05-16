@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="favicon.ico">
+<title>OtelliaFont</title>
+<style>
+@font-face {
+    font-family: 'otellia';
+    src: url('otellia.otf') format('opentype');
+}
+body {
+    font-family: sans-serif;
+    padding: 20px;
+    background-color: #f9f9f9;
+    color: #555;
+    max-width: 700px;
+    margin: auto;
+    transition: background-color 0.3s, color 0.3s;
+}
+body.dark-mode {
+    background-color: #121212;
+    color: #eee;
+}
+#textbox {
+    width: 100%;
+    height: 200px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    font-size: 50px;
+    font-family: 'otellia', sans-serif;
+    resize: none;
+    box-sizing: border-box;
+    display: block;
+    margin-bottom: 20px;
+    background-color: white;
+    color: black;
+}
+body.dark-mode #textbox {
+    background-color: #1e1e1e;
+    color: #eee;
+    border-color: #444;
+}
+label, button {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.color-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+.color-buttons button {
+    padding: 10px 14px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    flex: 1 0 22%;
+    min-width: 60px;
+}
+.color-sliders {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+.color-preview {
+    width: 100%;
+    height: 40px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background: #000;
+}
+body.dark-mode .color-preview {
+    border-color: #555;
+}
+.color-info {
+    margin-top: 5px;
+    font-size: 14px;
+    white-space: pre-wrap;
+    background: #fff;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+body.dark-mode .color-info {
+    background: #1e1e1e;
+    border-color: #555;
+    color: #eee;
+}
+input, select, button {
+    font-size: 16px;
+    padding: 10px;
+    margin-top: 5px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+body.dark-mode input,
+body.dark-mode select {
+    background-color: #1e1e1e;
+    color: #eee;
+    border-color: #444;
+}
+button {
+    background-color: #555;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.slider-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.slider-group input[type="number"] {
+    width: 60px;
+    padding: 5px;
+}
+@media (max-width: 600px) {
+    .color-buttons button {
+        flex: 1 0 45%;
+    }
+}
+@media (prefers-color-scheme: dark) {
+  body:not(.dark-mode) {
+    background-color: #f9f9f9;
+    color: #555;
+  }
+  body:not(.dark-mode) #textbox, body:not(.dark-mode) input, body:not(.dark-mode) select {
+    background-color: white;
+    color: black;
+    border-color: #ccc;
+  }
+}
+</style>
+<script>
+function toggleDarkMode() {
+  document.body.classList.toggle("dark-mode");
+}
+</script>
+</head>
+<body>
+<h1>OtelliaFont</h1>
+<button onclick="toggleDarkMode()">ダークモード切り替え</button>
+<textarea id="textbox" placeholder="ここに自由に文字を打ってください(半角英数字)..."></textarea>
+<!-- 省略：以降の内容は既存コードのまま -->
+
+
+<button onclick="saveImage()">画像として保存</button>
+
+<label>テキストの色を選択 <input type="color" id="colorPicker" value="#000000"></label>
+
+<div class="color-buttons">
+  <button onclick="setColor('#000000')" style="background:#000; color:#fff;">黒</button>
+  <button onclick="setColor('#ffffff')" style="background:#fff; color:#000;">白</button>
+  <button onclick="setColor('#ff0000')" style="background:#f00; color:#fff;">赤</button>
+  <button onclick="setColor('#00ccff')" style="background:#0cf; color:#000;">水色</button>
+</div>
+
+<div class="color-sliders">
+  <div class="slider-group">
+    <label>R:</label>
+    <input type="range" id="rSlider" min="0" max="255" value="0">
+    <input type="number" id="rNumber" min="0" max="255" value="0">
+  </div>
+  <div class="slider-group">
+    <label>G:</label>
+    <input type="range" id="gSlider" min="0" max="255" value="0">
+    <input type="number" id="gNumber" min="0" max="255" value="0">
+  </div>
+  <div class="slider-group">
+    <label>B:</label>
+    <input type="range" id="bSlider" min="0" max="255" value="0">
+    <input type="number" id="bNumber" min="0" max="255" value="0">
+  </div>
+  <div class="color-preview" id="colorPreview"></div>
+</div>
+
+<div class="color-info" id="colorInfo"></div>
+
+<label>
+  フォントサイズ: <span id="fontSizeLabel">400</span>px
+  <input type="range" id="fontSizeInput" min="100" max="2000" value="400">
+  <input type="number" id="fontSizeNumber" min="100" max="2000" value="400">
+</label>
+
+<label>文字間隔(px): <input type="number" id="letterSpacingInput" value="0"></label>
+<label>行間(px): <input type="number" id="lineSpacingInput" value="0"></label>
+
+<label>
+  揃え方:
+  <select id="alignmentSelect">
+    <option value="left">左揃え</option>
+    <option value="center">中央揃え</option>
+    <option value="right">右揃え</option>
+  </select>
+</label>
+
+<script>
+function syncColorInputs() {
+  ['r', 'g', 'b'].forEach(channel => {
+    const slider = document.getElementById(channel + 'Slider');
+    const number = document.getElementById(channel + 'Number');
+    slider.addEventListener('input', () => {
+      number.value = slider.value;
+      updateColorFromSliders();
+    });
+    number.addEventListener('input', () => {
+      slider.value = number.value;
+      updateColorFromSliders();
+    });
+  });
+
+  const colorPicker = document.getElementById('colorPicker');
+  colorPicker.addEventListener('input', () => {
+    setColor(colorPicker.value);
+  });
+}
+
+
+function syncFontSizeInputs() {
+  const slider = document.getElementById('fontSizeInput');
+  const number = document.getElementById('fontSizeNumber');
+  const label = document.getElementById('fontSizeLabel');
+  slider.addEventListener('input', () => {
+    number.value = slider.value;
+    label.textContent = slider.value;
+  });
+  number.addEventListener('input', () => {
+    slider.value = number.value;
+    label.textContent = number.value;
+  });
+}
+
+function setColor(hex) {
+  document.getElementById('colorPicker').value = hex;
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  document.getElementById('rSlider').value = r;
+  document.getElementById('gSlider').value = g;
+  document.getElementById('bSlider').value = b;
+  document.getElementById('rNumber').value = r;
+  document.getElementById('gNumber').value = g;
+  document.getElementById('bNumber').value = b;
+  updateColorFromSliders();
+}
+
+function updateColorFromSliders() {
+  const r = parseInt(document.getElementById('rSlider').value);
+  const g = parseInt(document.getElementById('gSlider').value);
+  const b = parseInt(document.getElementById('bSlider').value);
+  const hex = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+  const hsl = rgbToHsl(r, g, b);
+  document.getElementById('colorPreview').style.backgroundColor = hex;
+  document.getElementById('colorInfo').textContent = `HEX: ${hex}\nRGB: ${r}, ${g}, ${b}\nHSL: ${hsl}`;
+  document.getElementById('colorPicker').value = hex;
+}
+
+function rgbToHsl(r, g, b) {
+  r /= 255;
+  g /= 255;
+  b /= 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let h, s, l = (max + min) / 2;
+  if (max === min) {
+    h = s = 0;
+  } else {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      case b: h = (r - g) / d + 4; break;
+    }
+    h /= 6;
+  }
+  return `${Math.round(h * 360)}, ${Math.round(s * 100)}%, ${Math.round(l * 100)}%`;
+}
+
+function saveImage() {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  const text = document.getElementById('textbox').value;
+  const fontSize = parseFloat(document.getElementById('fontSizeInput').value);
+  const letterSpacing = parseFloat(document.getElementById('letterSpacingInput').value);
+  const lineSpacing = parseFloat(document.getElementById('lineSpacingInput').value);
+  const color = document.getElementById('colorPicker').value;
+  const align = document.getElementById('alignmentSelect').value;
+  const lines = text.split('\n');
+  const lineHeight = fontSize + lineSpacing;
+  const font = `${fontSize}px otellia`;
+  ctx.font = font;
+  let maxWidth = 0;
+  lines.forEach(line => {
+    const width = ctx.measureText(line).width + (line.length - 1) * letterSpacing;
+    if (width > maxWidth) maxWidth = width;
+  });
+  canvas.width = maxWidth + 200;
+  canvas.height = lines.length * lineHeight + 200;
+  ctx.font = font;
+  ctx.fillStyle = color;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  let x = 100, y = 100 + fontSize;
+  lines.forEach(line => {
+    let offsetX = 0;
+    const lineWidth = ctx.measureText(line).width + (line.length - 1) * letterSpacing;
+    if (align === 'center') offsetX = (canvas.width - lineWidth) / 2;
+    else if (align === 'right') offsetX = canvas.width - lineWidth - 100;
+    for (let i = 0; i < line.length; i++) {
+      ctx.fillText(line[i], x + offsetX, y);
+      offsetX += ctx.measureText(line[i]).width + letterSpacing;
+    }
+    y += lineHeight;
+  });
+  const dataURL = canvas.toDataURL('image/png');
+  const fileName = text.trim().replace(/\s+/g, '_').toLowerCase() || 'otellia_images';
+  const link = document.createElement('a');
+  link.href = dataURL;
+  link.download = fileName + '.png';
+  link.click();
+}
+
+syncColorInputs();
+syncFontSizeInputs();
+</script>
+</body>
+</html>
